@@ -183,16 +183,19 @@ public class Cat extends Observable implements Observer {
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		if (cm.mob1Room.getMob1Room().equals(currentRoom)){
-			inRoomWithMob1 = true;
-			System.out.println("You are in the same room as mob 1");
+		MOB_Room changedMobRoom = (MOB_Room)arg;
+		String name = changedMobRoom.getMobName();
+		Room room = changedMobRoom.getCurrentRoom();
+		if (currentRoom.equals(room)) {
+			System.out.println("You are in the same room as mob " + name + ".");
+			if (name.equals("1")) {
+				inRoomWithMob1 = true;
+			}
+			if (name.equals("2")) {
+				inRoomWithMob2 = true;
+			}
 		} else {
 			inRoomWithMob1 = false;
-		}
-		if (cm.mob2Room.getMob2Room().equals(currentRoom)) {
-			inRoomWithMob2 = true;
-			System.out.println("You are in the same room as mob 2");
-		} else {
 			inRoomWithMob2 = false;
 		}
 		setChanged();

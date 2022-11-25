@@ -57,7 +57,6 @@ public class Mob implements Runnable {
 	public void mobGoRoom() {
 		Room r = currentRoom.goRandomExit();
 		currentRoom = r;
-		// maybe pass the mob instead
 		cm.notifyMobRoomChange(name, r);
 		System.out.println("Mob " + getName() + " is in the " + currentRoom.getRoomName());
 		

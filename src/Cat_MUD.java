@@ -13,12 +13,6 @@ import java.util.concurrent.Executors;
 public class Cat_MUD extends Observable {
 	private Boolean isRunning;
 	
-	private Room catRoom;
-	
-	public MOB_Room mob1Room;
-	
-	public MOB_Room mob2Room;
-	
 	public Cat_MUD(Boolean isRunning)	{
 		this.isRunning = isRunning;
 		
@@ -110,16 +104,8 @@ public class Cat_MUD extends Observable {
 	}
 
 	public void notifyMobRoomChange(String name, Room currentRoom) {
-		// why not just compare cat.currentRoom and mobN.currentRoom?
-		if (name.equals("1")) {
-			mob1Room.updateMob1Room(currentRoom);
-		}
-		else if (name.equals("2")) {
-			mob2Room.updateMob2Room(currentRoom);
-			
-		}
 		setChanged();
-		notifyObservers();
+		notifyObservers(new MOB_Room(name, currentRoom));
 		
 	}
 	
@@ -129,9 +115,6 @@ public class Cat_MUD extends Observable {
 		notifyObservers();
 	}
 	
-	public Room getCatRoom() {
-		return catRoom;
-	}
 	public Boolean isRunning() {
 		return isRunning;
 	}

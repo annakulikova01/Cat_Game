@@ -5,12 +5,9 @@ public class MOB_Room {
 	
 	private Room currentRoom;
 	
-	private Room mob1Room;
-	
-	private Room mob2Room;
-	
-	public MOB_Room() {
-		
+	public MOB_Room(String mobName, Room currentRoom) {
+		this.mobName = mobName;
+		this.currentRoom = currentRoom;
 	}
 
 	public String getMobName() {
@@ -21,19 +18,5 @@ public class MOB_Room {
 		return currentRoom;
 	}
 	
-	public void updateMob1Room(Room currentRoom) {
-		mob1Room = currentRoom;
-	}
-		
-	public Room getMob1Room() {
-		return mob1Room;
-	}
-	
-	public void updateMob2Room(Room currentRoom) {
-		mob2Room = currentRoom;
-	}
-		
-	public Room getMob2Room() {
-		return mob2Room;
-	}
+
 }
