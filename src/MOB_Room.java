@@ -11,11 +11,19 @@ public class MOB_Room {
 	}
 
 	public String getMobName() {
-		return mobName;
+		return this.mobName;
 	}
 	
 	public Room getCurrentRoom() {
-		return currentRoom;
+		return this.currentRoom;
+	}
+
+	public void setMobName(String mobName) {
+		this.mobName = mobName;
+	}
+
+	public void setCurrentRoom(Room currentRoom) {
+		this.currentRoom = currentRoom;
 	}
 	
 

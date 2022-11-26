@@ -12,22 +12,20 @@ public class Cat extends Observable implements Observer {
 	private Boolean inRoomWithMob1;
 	
 	private Boolean inRoomWithMob2;
-	
-	private MOB_Room mob1Room;
-	
-	private MOB_Room mob2Room;
+
+	public ArrayList<Item> itemsHeld = new ArrayList<>();
 	
 	public Cat(Room currentRoom, Cat_MUD cm) {
 		this.currentRoom = currentRoom;
 		this.cm = cm;
+		this.inRoomWithMob1 = false;
+		this.inRoomWithMob2 = false;
 	}
-
-	public ArrayList<Item> itemsHeld = new ArrayList<>();
 	
 	public Boolean getItem(String item) {
-		Item it = currentRoom.giveItem(item);
+		Item it = this.currentRoom.giveItem(item);
 		if (it != null) {
-			itemsHeld.add(it);
+			this.itemsHeld.add(it);
 			return true;
 		} else 
 			return false;
@@ -39,44 +37,45 @@ public class Cat extends Observable implements Observer {
 			return false;
 		} else {
 			this.currentRoom = r;
-			cm.notifyCatRoomChange();
+			this.cm.notifyCatRoomChange();
+			
 			return true;
 		}
 	}
 	public String getItemsList() {
 		String ret = "";
-		for (Item i : itemsHeld) {
+		for (Item i : this.itemsHeld) {
 			ret = ret + i.getName() + " ";
 		}
 	return ret;
 	}
 	
 	public String observe() {
-		String l = "In: " + currentRoom.getRoomName() + "\n";
+		String l = "In: " + this.currentRoom.getRoomName() + "\n";
 		l = l + this.getRoomDescription() + "\n";
 		l = l + " Holding: " + this.getItemsList() + "\n";
-		l = l + " In room: " + currentRoom.getRoomItemsList() + "\n";
+		l = l + " In room: " + this.currentRoom.getRoomItemsList() + "\n";
 		l = l + " Exits: " + this.getRoomExitsList() + "\n";
 		return l;
 	}
 	
 	public String autoLookText() {
 		String l = this.getRoomDescription() + "\n";
-		l = l + " In room: " + currentRoom.getRoomItemsList() + "\n";
+		l = l + " In room: " + this.currentRoom.getRoomItemsList() + "\n";
 		l = l + " Exits: " + this.getRoomExitsList() + "\n";
 		return l;
 	}
 	
 
 	private String getRoomExitsList() {
-		return currentRoom.getExitsList();
+		return this.currentRoom.getExitsList();
 	}
 	
 	//gets an array of exit directions for the current room
 	public String[] getCurrentRoomExitsDirection() {
 		String direction1 = "";
 		String direction2 = "";
-		ArrayList<Exit> currentRoomExits = currentRoom.getExits();
+		ArrayList<Exit> currentRoomExits = this.currentRoom.getExits();
 		direction1 = currentRoomExits.get(0).getDirection();
 		direction2 = currentRoomExits.get(1).getDirection();
 		String[] exitDirections = new String[2];
@@ -106,7 +105,7 @@ public class Cat extends Observable implements Observer {
 	public ImageIcon[] getCurrentRoomExitsImage() {
 		ImageIcon image1;
 		ImageIcon image2;
-		ArrayList<Exit> currentRoomExits = currentRoom.getExits();
+		ArrayList<Exit> currentRoomExits = this.currentRoom.getExits();
 		image1 = currentRoomExits.get(0).getButton();
 		image2 = currentRoomExits.get(1).getButton();
 		ImageIcon[] exitImages = new ImageIcon[2];
@@ -133,7 +132,7 @@ public class Cat extends Observable implements Observer {
 	public String[] getCurrentRoomExitsDescription() {
 		String exit1 = "";
 		String exit2 = "";
-		ArrayList<Exit> currentRoomExits = currentRoom.getExits();
+		ArrayList<Exit> currentRoomExits = this.currentRoom.getExits();
 		exit1 = currentRoomExits.get(0).getDescription() + "";
 		exit2 = currentRoomExits.get(1).getDescription() + "";
 		String[] exitDescriptions = new String[2];
@@ -156,17 +155,17 @@ public class Cat extends Observable implements Observer {
 	}
 	
 	public String getRoomDescription() {
-		return currentRoom.roomDescription();
+		return this.currentRoom.roomDescription();
 	}
 	
 	public ImageIcon getRoomImage() {
-		return currentRoom.getImage();
+		return this.currentRoom.getImage();
 	}
 	public Boolean dropItem(String it) {
-		for (Item item : itemsHeld) {
+		for (Item item : this.itemsHeld) {
 			if (item.getName().equals(it)) {
-				itemsHeld.remove(item);
-				currentRoom.addItem(item);
+				this.itemsHeld.remove(item);
+				this.currentRoom.addItem(item);
 				return true;
 			} 
 		} 
@@ -174,34 +173,38 @@ public class Cat extends Observable implements Observer {
 	}
 
 	public Boolean getInRoomWithMob1() {
-		return inRoomWithMob1;
+		return this.inRoomWithMob1;
 	}
 	
 	public Boolean getInRoomWithMob2() {
-		return inRoomWithMob2;
+		return this.inRoomWithMob2;
 	}
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		MOB_Room changedMobRoom = (MOB_Room)arg;
+		MOB_Room changedMobRoom = (MOB_Room) arg;
 		String name = changedMobRoom.getMobName();
 		Room room = changedMobRoom.getCurrentRoom();
-		if (currentRoom.equals(room)) {
-			System.out.println("You are in the same room as mob " + name + ".");
-			if (name.equals("1")) {
-				inRoomWithMob1 = true;
+		if (name.equals("1")) {
+			if (this.currentRoom.equals(room)) {
+				System.out.println("You are in the same room as mob " + name + ".");
+				this.inRoomWithMob1 = true;
+			} 
+			else {
+				this.inRoomWithMob1 = false;
 			}
-			if (name.equals("2")) {
-				inRoomWithMob2 = true;
+		}
+		if (name.equals("2")) {
+			if (this.currentRoom.equals(room)) {
+				System.out.println("You are in the same room as mob " + name + ".");
+				this.inRoomWithMob2 = true;
+			} 
+			else {
+				this.inRoomWithMob2 = false;
 			}
-		} else {
-			inRoomWithMob1 = false;
-			inRoomWithMob2 = false;
 		}
 		setChanged();
 		notifyObservers();
 	}
-
-
 }
 	

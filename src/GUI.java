@@ -359,17 +359,17 @@ public class GUI implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (cat.getInRoomWithMob1().equals(true)) {
-			owner1PicPlay.setVisible(true);
+		if (this.cat.getInRoomWithMob1().equals(true)) {
+			this.owner1PicPlay.setVisible(true);
 		}
-		if (cat.getInRoomWithMob1().equals(false)){
-			owner1PicPlay.setVisible(false);
+		if (this.cat.getInRoomWithMob1().equals(false)){
+			this.owner1PicPlay.setVisible(false);
 		}
-		if (cat.getInRoomWithMob2().equals(true)) {
-			owner2PicPlay.setVisible(true);
+		if (this.cat.getInRoomWithMob2().equals(true)) {
+			this.owner2PicPlay.setVisible(true);
 		}
-		if (cat.getInRoomWithMob2().equals(false)){
-			owner2PicPlay.setVisible(false);
+		if (this.cat.getInRoomWithMob2().equals(false)){
+			this.owner2PicPlay.setVisible(false);
 		}
 		
 	}

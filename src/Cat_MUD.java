@@ -13,6 +13,10 @@ import java.util.concurrent.Executors;
 public class Cat_MUD extends Observable {
 	private Boolean isRunning;
 	
+	// TODO: track 2 mob rooms, 1 for each mob
+	private MOB_Room mob1Room;
+	private MOB_Room mob2Room;
+	
 	public Cat_MUD(Boolean isRunning)	{
 		this.isRunning = isRunning;
 		
@@ -84,10 +88,11 @@ public class Cat_MUD extends Observable {
 		
 		
 		
-		
-		Runnable mob1 = new Mob("1", bedroom, this, 10000L, "Images/owner1.png");
-		Runnable mob2 = new Mob("2", bathroom, this, 11000L, "Images/owner2.png");
-		
+		// we're already tracking name and room here; is MOB_room necessary? 
+		Mob mob1 = new Mob("1", bedroom, this, 10000L, "Images/owner1.png");
+		this.mob1Room = new MOB_Room(mob1.getName(), mob1.getRoom());
+		Mob mob2 = new Mob("2", bathroom, this, 11000L, "Images/owner2.png");
+		this.mob2Room = new MOB_Room(mob2.getName(), mob2.getRoom());
 		ExecutorService service = Executors.newFixedThreadPool(2);
 		
 		service.execute(mob1);
@@ -104,23 +109,31 @@ public class Cat_MUD extends Observable {
 	}
 
 	public void notifyMobRoomChange(String name, Room currentRoom) {
+		// update this class's mob rooms for the notifyCat method
+		if(name.equals("1")) {
+			this.mob1Room.setCurrentRoom(currentRoom);
+		}
+		else {
+			this.mob2Room.setCurrentRoom(currentRoom);
+		}
 		setChanged();
 		notifyObservers(new MOB_Room(name, currentRoom));
-		
 	}
-	
 	
 	public void notifyCatRoomChange() {
 		setChanged();
-		notifyObservers();
+		// pass the mob rooms here
+		notifyObservers(this.mob1Room);
+		setChanged();
+		notifyObservers(this.mob2Room);
 	}
 	
 	public Boolean isRunning() {
-		return isRunning;
+		return this.isRunning;
 	}
 
 	public void stopRunning() {
-		isRunning = false;
+		this.isRunning = false;
 	}
 	
 	public static void main(String[] args) {

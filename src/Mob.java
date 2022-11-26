@@ -20,14 +20,14 @@ public class Mob implements Runnable {
 		this.currentRoom = currentRoom;
 		this.cm = cm;
 		this.waitTime = waitTime;
-		image = new ImageIcon(filename);
+		this.image = new ImageIcon(filename);
 	}
 	
 	//Random ramdomTime = new Random();
 	
 	public long getRandomTime() {
-		long leftLimit = waitTime - 5000L;
-		long rightLimit = waitTime + 5000L;
+		long leftLimit = this.waitTime - 5000L;
+		long rightLimit = this.waitTime + 5000L;
 		long newRandomTime = leftLimit + (long) (Math.random() * (rightLimit - leftLimit));
 		return newRandomTime;
 	}
@@ -36,7 +36,7 @@ public class Mob implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		try {
-			while (cm.isRunning() == true) 
+			while (this.cm.isRunning() == true) 
 			{
 				mobGoRoom();
 				Thread.sleep(getRandomTime());
@@ -48,17 +48,20 @@ public class Mob implements Runnable {
 		}
 		
 	}
-	
 
 	public String getName() {
-		return name;
+		return this.name;
+	}
+
+	public Room getRoom() {
+		return this.currentRoom;
 	}
 	
 	public void mobGoRoom() {
-		Room r = currentRoom.goRandomExit();
-		currentRoom = r;
-		cm.notifyMobRoomChange(name, r);
-		System.out.println("Mob " + getName() + " is in the " + currentRoom.getRoomName());
+		Room r = this.currentRoom.goRandomExit();
+		this.currentRoom = r;
+		this.cm.notifyMobRoomChange(this.name, r);
+		System.out.println("Mob " + getName() + " is in the " + this.currentRoom.getRoomName());
 		
 	}
 }
