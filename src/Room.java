@@ -77,6 +77,10 @@ public class Room {
 	public ArrayList<Exit> getExits() {
 		return exits;
 	}
+	
+	public ArrayList<Item> getItems() {
+		return items;
+	}
 	public String getRoomItemsList() {
 			String ret = "";
 			for (Item i : items) {

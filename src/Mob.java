@@ -23,7 +23,7 @@ public class Mob implements Runnable {
 		this.image = new ImageIcon(filename);
 	}
 	
-	//Random ramdomTime = new Random();
+	//returns a random time within a range of 1000 determined by the value given at object construction
 	
 	public long getRandomTime() {
 		long leftLimit = this.waitTime - 5000L;
@@ -32,6 +32,8 @@ public class Mob implements Runnable {
 		return newRandomTime;
 	}
 	
+	
+	//while the cat mob is running, each thread moves to a room and then sleeps for an unspecified amount of milliseconds
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -57,11 +59,13 @@ public class Mob implements Runnable {
 		return this.currentRoom;
 	}
 	
+	//changes the mob's current room to the room that is returned from the goRandomExit method in the room class,
+	//and relays the mob's name and new room to the MUD
 	public void mobGoRoom() {
 		Room r = this.currentRoom.goRandomExit();
 		this.currentRoom = r;
 		this.cm.notifyMobRoomChange(this.name, r);
-		System.out.println("Mob " + getName() + " is in the " + this.currentRoom.getRoomName());
+		//System.out.println("Mob " + getName() + " is in the " + this.currentRoom.getRoomName());
 		
 	}
 }

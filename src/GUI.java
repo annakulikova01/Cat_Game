@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -23,12 +24,38 @@ public class GUI implements Observer {
 
 	private Cat_MUD cm;
 	
-	public GUI(Cat cat, Cat_MUD cm) {
+	
+	
+	
+	JLabel catnipLabel;
+	
+	// 
+	JLabel owner1PicPlay;
+	
+	JLabel owner2PicPlay;
+	
+	JLayeredPane layeredPanePlay;
+	
+	private Boolean canCharmOwner1;
+	
+	private Boolean canCharmOwner2;
+	
+	private int catPoints = 0;
+	
+	private ArrayList<Item> itemLabels = cm.getItemLabels();
+	
+	public GUI(Cat cat, Cat_MUD cm, Boolean canCharmOwner1, Boolean canCharmOwner2) {
 		
 		this.cat = cat;
 		this.cm = cm;
+		this.canCharmOwner1 = canCharmOwner1;
+		this.canCharmOwner2 = canCharmOwner2;
 		
 	}
+	
+	
+	
+
 	
 	//creates a JButton on the left side of the screen
 	JButton toRoomButton1 = new JButton();
@@ -39,10 +66,6 @@ public class GUI implements Observer {
 	//creates a JLabel that will display autolook text and observe after the player makes a change, such as moving to a new room or picking up and object
 	JLabel output = new JLabel();
 	
-	// 
-	JLabel owner1PicPlay;
-	
-	JLabel owner2PicPlay;
 	
 	//creates a method that changes the text of the button on the left so that it corresponds to the first exit of the new room
 	public void changeButton1Text() {
@@ -75,6 +98,28 @@ public class GUI implements Observer {
 		label.setVisible(true);
 	}
 	
+	private Boolean getCanCharmOwner1() {
+		return canCharmOwner1;
+	}
+	
+	private Boolean getCanCharmOwner2() {
+		return canCharmOwner2;
+	}
+	
+	private void setCanCharmOwner1(Boolean value) {
+		canCharmOwner1 = value;
+	}
+	
+	private void setCanCharmOwner2(Boolean value) {
+		canCharmOwner2 = value;
+	}
+	/**
+	private void addItemLabels() {
+		for (Item i : itemLabels) {
+			layeredPanePlay.add(i, Integer.valueOf(1));
+		}
+	}
+	*/
 	public void run() {
 		
 		JFrame window = new JFrame("Untitled Cat Game");
@@ -133,7 +178,7 @@ public class GUI implements Observer {
 		
 		//creates a new layered pane for the gameplay screen, which will be situated below the home page at the
 		//beginning of the game so that it is not seen upon launching
-		JLayeredPane layeredPanePlay = new JLayeredPane();
+		layeredPanePlay = new JLayeredPane();
 		layeredPanePlay.setBounds(0, 0, 1000, 1000);
 		
 		//adds a JLabel that contains an image of the room that the cat is placed in at the start of the game
@@ -144,7 +189,174 @@ public class GUI implements Observer {
 		//adds the image of the current room to the background layer
 		layeredPanePlay.add(currentRoomPicture, Integer.valueOf(0));
 		
+		//this.addItemLabels();
 		
+		/**
+		ImageIcon plates = (Item.getItemImage("plates"));
+		
+		int newPlatesWidth = (int) Math.round((plates.getIconWidth()) * 1.1);
+		int newPlatesHeight = (int) Math.round((plates.getIconHeight()) * 1.1);
+		
+		Image platesOld = plates.getImage();
+		Image platesResized = platesOld.getScaledInstance(newPlatesWidth, newPlatesHeight, java.awt.Image.SCALE_SMOOTH);
+		plates = new ImageIcon(platesResized);
+		
+		
+		platesLabel.setBounds(840, 520, plates.getIconWidth(), plates.getIconHeight());
+		platesLabel.setIcon(plates);
+		platesLabel.setVisible(Item.getItemVisibility("plates"));
+		
+		layeredPanePlay.add(platesLabel, Integer.valueOf(1));
+		
+		
+		ImageIcon cup = (Item.getItemImage("cup"));
+		
+		int newCupWidth = (int) Math.round((cup.getIconWidth()) * .75);
+		int newCupHeight = (int) Math.round((cup.getIconHeight()) * .75);
+		
+		Image cupOld = cup.getImage();
+		Image cupResized = cupOld.getScaledInstance(newCupWidth, newCupHeight, java.awt.Image.SCALE_SMOOTH);
+		cup = new ImageIcon(cupResized);
+		
+		
+		cupLabel.setBounds(450, 475, cup.getIconWidth(), cup.getIconHeight());
+		cupLabel.setIcon(cup);
+		cupLabel.setVisible(Item.getItemVisibility("cup"));
+		
+		layeredPanePlay.add(cupLabel, Integer.valueOf(1));
+		
+		ImageIcon keys = (Item.getItemImage("keys"));
+		
+		int newKeysWidth = (int) Math.round((keys.getIconWidth()) * .5);
+		int newKeysHeight = (int) Math.round((keys.getIconHeight()) * .5);
+		
+		Image keysOld = keys.getImage();
+		Image keysResized = keysOld.getScaledInstance(newKeysWidth, newKeysHeight, java.awt.Image.SCALE_SMOOTH);
+		keys = new ImageIcon(keysResized);
+		
+		
+		keysLabel.setBounds(350, 390, newKeysWidth, newKeysHeight);
+		keysLabel.setIcon(keys);
+		keysLabel.setVisible(Item.getItemVisibility("keys"));
+		
+		layeredPanePlay.add(keysLabel, Integer.valueOf(1));
+		
+		
+		ImageIcon catnip = (Item.getItemImage("catnip"));
+		
+		catnipLabel = new JLabel();
+		catnipLabel.setBounds(100, 400, catnip.getIconWidth(), catnip.getIconHeight());
+		catnipLabel.setIcon(catnip);
+		catnipLabel.setVisible(Item.getItemVisibility("catnip"));
+		
+		layeredPanePlay.add(catnipLabel, Integer.valueOf(1));
+		
+		ImageIcon yarn = (Item.getItemImage("yarn"));
+		
+		int newYarnWidth = (int) Math.round((yarn.getIconWidth()) * .9);
+		int newYarnHeight = (int) Math.round((yarn.getIconHeight()) * .9);
+		
+		Image yarnOld = yarn.getImage();
+		Image yarnResized = yarnOld.getScaledInstance(newYarnWidth, newYarnHeight, java.awt.Image.SCALE_SMOOTH);
+		yarn = new ImageIcon(yarnResized);
+		
+		
+		yarnLabel.setBounds(75, 500, yarn.getIconWidth(), yarn.getIconHeight());
+		yarnLabel.setIcon(yarn);
+		yarnLabel.setVisible(Item.getItemVisibility("yarn"));
+		
+		layeredPanePlay.add(yarnLabel, Integer.valueOf(1));
+		
+		ImageIcon vase = (Item.getItemImage("vase"));
+		
+		int newVaseWidth  = (int) Math.round((vase.getIconWidth()) * 1.5);
+		int newVaseHeight = (int) Math.round((vase.getIconHeight()) * 1.5);
+		
+		Image vaseOld = vase.getImage();
+		Image vaseResized = vaseOld.getScaledInstance(newVaseWidth, newVaseHeight, java.awt.Image.SCALE_SMOOTH);
+		vase = new ImageIcon(vaseResized);
+		
+		
+		vaseLabel.setBounds(580, 135, newVaseWidth, newVaseHeight);
+		vaseLabel.setIcon(vase);
+		vaseLabel.setVisible(Item.getItemVisibility("vase"));
+		
+		layeredPanePlay.add(vaseLabel, Integer.valueOf(1));
+		
+		ImageIcon glasses = (Item.getItemImage("glasses"));
+		
+		int newGlassesWidth  = (int) Math.round((glasses.getIconWidth()) * .75);
+		int newGlassesHeight = (int) Math.round((glasses.getIconHeight()) * .75);
+		
+		Image glassesOld = glasses.getImage();
+		Image glassesResized = glassesOld.getScaledInstance(newGlassesWidth, newGlassesHeight, java.awt.Image.SCALE_SMOOTH);
+		glasses = new ImageIcon(glassesResized);
+		
+		
+		glassesLabel.setBounds(280, 380, newGlassesWidth, newGlassesHeight);
+		glassesLabel.setIcon(glasses);
+		glassesLabel.setVisible(Item.getItemVisibility("glasses"));
+		
+		layeredPanePlay.add(glassesLabel, Integer.valueOf(1));
+		
+		ImageIcon medicine = (Item.getItemImage("medicine"));
+		
+		int newMedicineWidth  = (int) Math.round((medicine.getIconWidth()) * .75);
+		int newMedicineHeight = (int) Math.round((medicine.getIconHeight()) * .75);
+		
+		Image medicineOld = medicine.getImage();
+		Image medicineResized = medicineOld.getScaledInstance(newMedicineWidth, newMedicineHeight, java.awt.Image.SCALE_SMOOTH);
+		medicine = new ImageIcon(medicineResized);
+		
+		
+		medicineLabel.setBounds(400, 320, newMedicineWidth, newMedicineHeight);
+		medicineLabel.setIcon(medicine);
+		medicineLabel.setVisible(Item.getItemVisibility("medicine"));
+		
+		layeredPanePlay.add(medicineLabel, Integer.valueOf(1));
+		
+		ImageIcon tie = (Item.getItemImage("tie"));
+		
+		
+		tieLabel.setBounds(860, 300, tie.getIconWidth(), tie.getIconHeight());
+		tieLabel.setIcon(tie);
+		tieLabel.setVisible(Item.getItemVisibility("tie"));
+		
+		layeredPanePlay.add(tieLabel, Integer.valueOf(1));
+		
+		ImageIcon sock = (Item.getItemImage("sock"));
+		
+		int newSockWidth  = (int) Math.round((sock.getIconWidth()) * .75);
+		int newSockHeight = (int) Math.round((sock.getIconHeight()) * .75);
+		
+		Image sockOld = sock.getImage();
+		Image sockResized = sockOld.getScaledInstance(newSockWidth, newSockHeight, java.awt.Image.SCALE_SMOOTH);
+		sock = new ImageIcon(sockResized);
+		
+		
+		sockLabel.setBounds(300, 600, newSockWidth, newSockHeight);
+		sockLabel.setIcon(sock);
+		sockLabel.setVisible(Item.getItemVisibility("sock"));
+		
+		layeredPanePlay.add(sockLabel, Integer.valueOf(1));
+		
+		ImageIcon ring = (Item.getItemImage("ring"));
+		
+		int newRingWidth  = (int) Math.round((ring.getIconWidth()) * .3);
+		int newRingHeight = (int) Math.round((ring.getIconHeight()) * .3);
+		
+		Image ringOld = ring.getImage();
+		Image ringResized = ringOld.getScaledInstance(newRingWidth, newRingHeight, java.awt.Image.SCALE_SMOOTH);
+		ring = new ImageIcon(ringResized);
+		
+		
+		ringLabel.setBounds(950, 520, newRingWidth, newRingHeight);
+		ringLabel.setIcon(ring);
+		ringLabel.setVisible(Item.getItemVisibility("ring"));
+		
+		layeredPanePlay.add(ringLabel, Integer.valueOf(1));
+		
+		*/
 		//creates a JLabel that contains an image of the cat, and places it at a layer above the image of the room
 		//so that it appears that the cat is in the room
 		JLabel catPicPlay = new JLabel();
@@ -168,7 +380,7 @@ public class GUI implements Observer {
 		
 		
 		
-		layeredPanePlay.add(owner1PicPlay, Integer.valueOf(1));
+		layeredPanePlay.add(owner1PicPlay, Integer.valueOf(2));
 		
 		owner2PicPlay = new JLabel();
 		owner2PicPlay.setBounds(818, 150, 157, 400);
@@ -179,7 +391,7 @@ public class GUI implements Observer {
 		owner2PicPlay.setIcon(owner2PlayPic);
 		owner2PicPlay.setVisible(false);
 		
-		layeredPanePlay.add(owner2PicPlay, Integer.valueOf(1));
+		layeredPanePlay.add(owner2PicPlay, Integer.valueOf(2));
 		
 		
 		//creates a JLabel that lists the commands that the player can type in to the input box, and adds it to the background layer
@@ -252,13 +464,25 @@ public class GUI implements Observer {
 	        				System.out.println("There's no one around to glare at.");
 	        			break;
 	        		*/
-	        		/*	
+	        			
 	        		case "charm":
-	        			System.out.println(":3");
-	        			if (!cat.charm())
+	        			
+	        			if (getCanCharmOwner1().equals(true)) {
+	        				catPoints = catPoints - 1;
+	        				System.out.println("catPoints: " + catPoints + "");
+	        					
+	        			}
+	        			if (getCanCharmOwner2().equals(true)) {
+	        				catPoints = catPoints - 1;
+	        				System.out.println("catPoints: " + catPoints + "");
+	        					
+	        			}
+	        			
+	        			if ((getCanCharmOwner1().equals(false)) & (getCanCharmOwner2().equals(false))) {
 	        				System.out.println("There's no one around to charm.");
+	        			}
 	        			break;
-	        		*/	
+	        			
 	        		default:
 	        			output.setText("Unrecognized command");
 	        			break;
@@ -305,7 +529,7 @@ public class GUI implements Observer {
 		toRoomButton1.setContentAreaFilled(false);
 		toRoomButton1.setFocusPainted(false);
 		toRoomButton1.setBorderPainted(false);
-		toRoomButton1.addActionListener(new To_Room_ButtonListener(cat, toRoomButton1, toRoomButton2, output, currentRoomPicture));
+		toRoomButton1.addActionListener(new To_Room_ButtonListener(cat, cat.getCurrentRoom(), toRoomButton1, toRoomButton2, output, currentRoomPicture));
 		
 		layeredPanePlay.add(toRoomButton1, Integer.valueOf(1));
 		
@@ -321,7 +545,7 @@ public class GUI implements Observer {
 		toRoomButton2.setContentAreaFilled(false);
 		toRoomButton2.setFocusPainted(false);
 		toRoomButton2.setBorderPainted(false);
-		toRoomButton2.addActionListener(new To_Room_ButtonListener(cat, toRoomButton1, toRoomButton2, output, currentRoomPicture));
+		toRoomButton2.addActionListener(new To_Room_ButtonListener(cat, cat.getCurrentRoom(), toRoomButton1, toRoomButton2, output, currentRoomPicture));
 		
 		layeredPanePlay.add(toRoomButton2, Integer.valueOf(1));
 		
@@ -361,15 +585,19 @@ public class GUI implements Observer {
 	public void update(Observable o, Object arg) {
 		if (this.cat.getInRoomWithMob1().equals(true)) {
 			this.owner1PicPlay.setVisible(true);
+			setCanCharmOwner1(true);
 		}
 		if (this.cat.getInRoomWithMob1().equals(false)){
 			this.owner1PicPlay.setVisible(false);
+			setCanCharmOwner1(false);
 		}
 		if (this.cat.getInRoomWithMob2().equals(true)) {
 			this.owner2PicPlay.setVisible(true);
+			setCanCharmOwner2(true);
 		}
 		if (this.cat.getInRoomWithMob2().equals(false)){
 			this.owner2PicPlay.setVisible(false);
+			setCanCharmOwner2(false);
 		}
 		
 	}

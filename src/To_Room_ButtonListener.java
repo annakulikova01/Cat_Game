@@ -1,27 +1,44 @@
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Observable;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-public class To_Room_ButtonListener implements ActionListener {
+public class To_Room_ButtonListener implements ActionListener{
 	
 	private Cat cat;
+	private Room currentRoom;
 	private JButton toRoomButton1;
 	private JButton toRoomButton2;
 	private JLabel output;
 	private JLabel currentRoomPicture;
 	
-	public To_Room_ButtonListener(Cat cat, JButton toRoomButton1, JButton toRoomButton2, JLabel output, JLabel currentRoomPicture) {
+	public To_Room_ButtonListener(Cat cat, Room currentRoom, JButton toRoomButton1, JButton toRoomButton2, JLabel output, JLabel currentRoomPicture) {
 		this.cat = cat;
+		this.currentRoom = currentRoom;
 		this.toRoomButton1 = toRoomButton1;
 		this.toRoomButton2 = toRoomButton2;
 		this.output = output;
 		this.currentRoomPicture = currentRoomPicture;
 	}
-
+	
+	public void resetRoomItemsVisbility() {
+		ArrayList<Item> currentRoomItems = this.currentRoom.getItems();
+		for (Item i : currentRoomItems) {
+			i.setVisible(false);
+	}
+	}
+	
+	public void makeRoomItemsVisible() {
+		ArrayList<Item> currentRoomItems = this.currentRoom.getItems();
+		for (Item i : currentRoomItems) {
+			i.setVisible(true);
+	}
+	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -31,8 +48,12 @@ public class To_Room_ButtonListener implements ActionListener {
 		String buttonText = buttonClicked.getText();
 		int indexOfFirstSpace = buttonText.indexOf(" ");
 		String exit = buttonText.substring(indexOfFirstSpace + 1);
+		this.resetRoomItemsVisbility();
 		//changes the room based on the text of the button
 		cat.go(exit);
+		currentRoom = cat.getCurrentRoom();
+		this.makeRoomItemsVisible();
+		
 		//updates the output, image of the room, and exit buttons to correspond to the new room 
 		output.setText(cat.autoLookText());
 		ImageIcon roomPic = cat.getRoomImage();

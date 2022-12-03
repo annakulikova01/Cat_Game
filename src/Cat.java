@@ -25,10 +25,13 @@ public class Cat extends Observable implements Observer {
 	public Boolean getItem(String item) {
 		Item it = this.currentRoom.giveItem(item);
 		if (it != null) {
-			this.itemsHeld.add(it);
+			itemsHeld.add(it);
 			return true;
 		} else 
 			return false;
+	}
+	public Room getCurrentRoom() {
+		return currentRoom;
 	}
 	
 	public Boolean go(String exit) {
@@ -44,7 +47,7 @@ public class Cat extends Observable implements Observer {
 	}
 	public String getItemsList() {
 		String ret = "";
-		for (Item i : this.itemsHeld) {
+		for (Item i : itemsHeld) {
 			ret = ret + i.getName() + " ";
 		}
 	return ret;
@@ -180,6 +183,10 @@ public class Cat extends Observable implements Observer {
 		return this.inRoomWithMob2;
 	}
 	
+	
+	//compares each mob's location to the cat's location every time notifyObservers is fired, which is every time either the cat
+	//or a mob moves, and if a mob's location is the same as the cats, the cats state of whether its in the same room as the mob is true, and vive versa
+	//once a state for a mob is updates, the gui's observer is notified
 	@Override
 	public void update(Observable o, Object arg) {
 		MOB_Room changedMobRoom = (MOB_Room) arg;
@@ -187,7 +194,7 @@ public class Cat extends Observable implements Observer {
 		Room room = changedMobRoom.getCurrentRoom();
 		if (name.equals("1")) {
 			if (this.currentRoom.equals(room)) {
-				System.out.println("You are in the same room as mob " + name + ".");
+				//System.out.println("You are in the same room as mob " + name + ".");
 				this.inRoomWithMob1 = true;
 			} 
 			else {
@@ -196,7 +203,7 @@ public class Cat extends Observable implements Observer {
 		}
 		if (name.equals("2")) {
 			if (this.currentRoom.equals(room)) {
-				System.out.println("You are in the same room as mob " + name + ".");
+				//System.out.println("You are in the same room as mob " + name + ".");
 				this.inRoomWithMob2 = true;
 			} 
 			else {
