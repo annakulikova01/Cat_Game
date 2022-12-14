@@ -450,6 +450,7 @@ public class GUI extends Observable implements Observer, LineListener {
 		inventoryBox.setFocusPainted(false);
 		inventoryBox.setBorderPainted(false);
 		Random random = new Random();
+		layeredPanePlay.add(inventoryBox, Integer.valueOf(3));
 		
 		inventoryBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -458,6 +459,7 @@ public class GUI extends Observable implements Observer, LineListener {
 					
 					for (Item i : itemLabels) {
 						if (buttonClicked.getIcon().equals(i.getInventoryImage())){
+							//inventoryBox.setBounds(500, 500, 130, 130);
 							inventoryBox.setVisible(false);
 							//inventoryBox.setIcon(null);
 							
@@ -467,10 +469,12 @@ public class GUI extends Observable implements Observer, LineListener {
 							int x = xmin + (int)(Math.random() * (xmax - xmin));
 							int ymin = 100;
 							int ymax = 500;
-							int y = ymin + (int) (Math.random() * (ymax - ymin));
-							i.setBounds(x, y, i.getIconWidth(), i.getIconHeight());
+							int y = ymin + (int) (Math.random() * (ymax - ymin));	
+							i.setXNew(x);
+							i.setYNew(y);
 							i.setVisible(true);
 							i.setVisibility(true);
+							
 							cat.dropItem(i);
 							holdingButton.setVisible(false);
 							/*
@@ -494,7 +498,7 @@ public class GUI extends Observable implements Observer, LineListener {
 				}
 			}
 		});
-		layeredPanePlay.add(inventoryBox, Integer.valueOf(3));
+		
 		
 		
 		
