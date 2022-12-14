@@ -153,5 +153,12 @@ public class Item extends JButton{
 			return this.yOrig;
 		}
 		
+		public int getXNew() {
+			return this.xNew;
+		}
+		
+		public int getYNew() {
+			return this.yNew;
+		}
 		
 }

@@ -464,32 +464,42 @@ public class GUI extends Observable implements Observer, LineListener {
 							//inventoryBox.setIcon(null);
 							
 							inventoryBoxFull = false;
-							int xmin = 100;
-							int xmax = 900;
-							int x = xmin + (int)(Math.random() * (xmax - xmin));
-							int ymin = 100;
-							int ymax = 500;
-							int y = ymin + (int) (Math.random() * (ymax - ymin));	
-							i.setBounds(x, y, i.getIconWidth(), i.getIconHeight());
-							i.setVisible(true);
-							i.setVisibility(true);
+							
+							
+							
 							
 							cat.dropItem(i);
 							holdingButton.setVisible(false);
-							/*
+							
 							if (!i.getOriginalRoom().equals(cat.getCurrentRoom())) {
+								int xmin = 100;
+								int xmax = 900;
+								int x = xmin + (int)(Math.random() * (xmax - xmin));
+								int ymin = 100;
+								int ymax = 500;
+								int y = ymin + (int) (Math.random() * (ymax - ymin));	
+								i.setBounds(x, y, i.getIconWidth(), i.getIconHeight());
+								i.setVisible(true);
+								i.setVisibility(true);
+								i.setXNew(x);
+								i.setYNew(y);
 								i.setWasMoved(true);
 								catPoints = catPoints + i.getValue();
 								System.out.println("Cat points: " + catPoints);
 							}
 							if (i.getOriginalRoom().equals(cat.getCurrentRoom())) {
+								i.setBounds(i.getXOrig(), i.getYOrig(), i.getIconWidth(), i.getIconHeight());
+								i.setVisible(true);
+								i.setVisibility(true);
+								i.setXNew(i.getXOrig());
+								i.setYNew(i.getYOrig());
 								if (i.getWasMoved().equals(true)) {
 								catPoints = catPoints - i.getValue();
 								System.out.println("Cat points: " + catPoints);
 								}
 								i.setWasMoved(false);
 							}
-							*/
+							
 							
 						}
 						

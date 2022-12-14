@@ -13,6 +13,8 @@ public class Mob implements Runnable, Observer {
 	
 	private Cat cat;
 	
+	
+	
 	private Room currentRoom;
 	
 	private long waitTime;
@@ -26,6 +28,7 @@ public class Mob implements Runnable, Observer {
 		this.currentRoom = currentRoom;
 		this.cm = cm;
 		this.cat = cat;
+		
 		this.waitTime = waitTime;
 		this.image = new ImageIcon(filename);
 	}
@@ -71,7 +74,8 @@ public class Mob implements Runnable, Observer {
 	public void mobGoRoom() {
 		Room r = this.currentRoom.goRandomExit();
 		this.currentRoom = r;
-		this.cm.notifyMobRoomChange(this.name, r);
+		this.cm.notifyMobRoomChangeCat(this.name, r);
+		
 		//System.out.println("Mob " + getName() + " is in the " + this.currentRoom.getRoomName());
 		
 	}
@@ -79,7 +83,8 @@ public class Mob implements Runnable, Observer {
 	public void mobGoToCat(Room catRoom) {
 		Room r = catRoom;
 		this.currentRoom = r;
-		this.cm.notifyMobRoomChange(this.name,r);
+		this.cm.notifyMobRoomChangeCat(this.name,r);
+		
 		
 	}
 

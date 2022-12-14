@@ -21,6 +21,8 @@ public class Cat_MUD extends Observable {
 	
 	private ArrayList<Item> items = new ArrayList<Item>();
 	
+	private ArrayList<Dog_Item> dogItems = new ArrayList<Dog_Item>();
+	
 	
 	
 	public Cat_MUD(Boolean isRunning)	{
@@ -33,15 +35,30 @@ public class Cat_MUD extends Observable {
 		Room bathroom = new Room ("Bathroom", "You're in the bathroom.", "Images/bathroom.jpg");
 		//Room vents = new Room ("Vents", "You're in the vents.", "Images/vents.jpg");
 		
+		Dog_Room dogparlor = new Dog_Room ("Parlor", "You're in the parlor.", "Images/livingroom.jpeg");
+		Dog_Room dogbedroom = new Dog_Room ("Bedroom", "You're in the bedroom.", "Images/bedroom.jpg");
+		Dog_Room dogkitchen = new Dog_Room ("Kitchen", "You're in the kitchen.", "Images/kitchen.png");
+		Dog_Room dogbathroom = new Dog_Room ("Bathroom", "You're in the bathroom.", "Images/bathroom.jpg");
+		//Room vents = new Room ("Vents", "You're in the vents.", "Images/vents.jpg");
+		
 		Exit toParlor = new Exit ("To parlor", parlor, "parlor", "Images/toParlor.png");
 		Exit toBedroom = new Exit ("To bedroom", bedroom, "bedroom", "Images/toBedroom.png");
 		Exit toKitchen = new Exit ("To kitchen", kitchen, "kitchen", "Images/toKitchen.png");
 		Exit toBathroom = new Exit ("To bathroom", bathroom, "bathroom", "Images/toBathroom.png");
 		//Exit toVents = new Exit ("To vents", vents, "vents", "Images/toVents.png");
 		
+		Dog_Exit dogToParlor = new Dog_Exit ("To parlor", dogparlor, "dogparlor", "Images/toParlor.png");
+		Dog_Exit dogToBedroom = new Dog_Exit ("To bedroom", dogbedroom, "dogbedroom", "Images/toBedroom.png");
+		Dog_Exit dogToKitchen = new Dog_Exit ("To kitchen", dogkitchen, "dogkitchen", "Images/toKitchen.png");
+		Dog_Exit dogToBathroom = new Dog_Exit ("To bathroom", dogbathroom, "dogbathroom", "Images/toBathroom.png");
+		
 		Cat cat = new Cat (kitchen, this);
 		
+		Dog dog = new Dog (dogbedroom, this);
+		
 		GUI gui = new GUI(cat, this, false, false, false, true);
+		
+		Dog_GUI doggui = new Dog_GUI(dog, this);
 		
 		
 		
@@ -57,7 +74,20 @@ public class Cat_MUD extends Observable {
 		Item glasses = new Item ("glasses", gui, "Images/glasses.png", 25, 280, 380, 280, 380, .75, false, "Images/holdingglasses.png", bathroom, false);
 		Item plates = new Item ("plates", gui, "Images/plates.png", 10, 840, 520, 840, 520, 1.1, true, "Images/holdingplates.png", kitchen, false);
 		Item sock = new Item ("sock", gui, "Images/sock.png", 5, 300, 600, 300, 600, .75, false, "Images/holdingsock.png", bedroom, false);
-
+		
+		Dog_Item dogkeys = new Dog_Item ("dogkeys", doggui, "Images/keys.png", 10, 350, 390, 350, 390, .5, false, "Images/holdingkeys.png", dogparlor, false);
+		Dog_Item dogyarn = new Dog_Item ("dogyarn", doggui, "Images/yarn.png", 2, 75, 500, 75, 500, .9, false, "Images/holdingyarn.png", dogparlor, false);
+		Dog_Item dogvase = new Dog_Item ("dogvase", doggui, "Images/vase.png", 3, 580, 135, 580, 135, 1.5, false, "Images/holdingvase.png", dogparlor, false);
+		Dog_Item dogcup = new Dog_Item ("dogcup", doggui, "Images/cup.png", 4, 450, 475, 450, 475, .75, true, "Images/holdingcup.png", dogkitchen, false);
+		Dog_Item dogcatnip = new Dog_Item ("dogcatnip", doggui, "Images/catnip.png", 0, 100, 400, 100, 400, 1, false, "Images/holdingcatnip.png", dogparlor, false);
+		Dog_Item dogtie = new Dog_Item ("dogtie", doggui, "Images/tie.png", 15, 860, 300, 860, 300, 1, false, "Images/holdingtie.png", dogbedroom, false);
+		Dog_Item dogring = new Dog_Item ("dogring", doggui, "Images/ring.png", 40, 950, 520, 950, 520, .3, false, "Images/holdingring.png", dogbedroom, false);
+		//Item phone = new Item ("phone", "Images/phone.png", 25, false);
+		Dog_Item dogmedicine = new Dog_Item ("dogmedicine", doggui, "Images/medicine.png", 30, 400, 320, 400, 320, .75, false, "Images/holdingmedicine.png", dogbathroom, false);
+		Dog_Item dogglasses = new Dog_Item ("dogglasses", doggui, "Images/glasses.png", 25, 280, 380, 280, 380, .75, false, "Images/holdingglasses.png", dogbathroom, false);
+		Dog_Item dogplates = new Dog_Item ("dogplates", doggui, "Images/plates.png", 10, 840, 520, 840, 520, 1.1, true, "Images/holdingplates.png", dogkitchen, false);
+		Dog_Item dogsock = new Dog_Item ("dogsock", doggui, "Images/sock.png", 5, 300, 600, 300, 600, .75, false, "Images/holdingsock.png", dogbedroom, false);
+		
 		items.add(keys);
 		items.add(yarn);
 		items.add(vase);
@@ -69,6 +99,20 @@ public class Cat_MUD extends Observable {
 		items.add(glasses);
 		items.add(plates);
 		items.add(sock);
+		
+		dogItems.add(dogkeys);
+		dogItems.add(dogyarn);
+		dogItems.add(dogvase);
+		dogItems.add(dogcup);
+		dogItems.add(dogcatnip);
+		dogItems.add(dogtie);
+		dogItems.add(dogring);
+		dogItems.add(dogmedicine);
+		dogItems.add(dogglasses);
+		dogItems.add(dogplates);
+		dogItems.add(dogsock);
+		
+		
 		
 		parlor.addItem(catnip);
 		parlor.addItem(keys);
@@ -96,6 +140,39 @@ public class Cat_MUD extends Observable {
 		bedroom.addItem(sock);
 		bedroom.addExit(toParlor);
 		bedroom.addExit(toBathroom);
+		//bedroom.addExit(toVents);
+		
+		//vents.addExit(toBathroom);
+	    //vents.addExit(toBedroom);
+		//vents.addExit(toKitchen);
+		//vents.addExit(toParlor);
+		
+		dogparlor.addItemDog(dogcatnip);
+		dogparlor.addItemDog(dogkeys);
+		dogparlor.addItemDog(dogvase);
+		dogparlor.addItemDog(dogyarn);
+		dogparlor.addExitDog(dogToKitchen);
+		dogparlor.addExitDog(dogToBedroom);
+		//parlor.addExit(toVents);
+		
+		dogkitchen.addItemDog(dogplates);
+		dogkitchen.addItemDog(dogcup);
+		dogkitchen.addExitDog(dogToParlor);
+		dogkitchen.addExitDog(dogToBathroom);
+		//kitchen.addExit(toVents);
+		
+		dogbathroom.addItemDog(dogglasses);
+		dogbathroom.addItemDog(dogmedicine);
+		dogbathroom.addExitDog(dogToKitchen);
+		dogbathroom.addExitDog(dogToBedroom);
+		//bathroom.addExit(toVents);
+		
+		dogbedroom.addItemDog(dogring);
+		//bedroom.addItem(phone);
+		dogbedroom.addItemDog(dogtie);
+		dogbedroom.addItemDog(dogsock);
+		dogbedroom.addExitDog(dogToParlor);
+		dogbedroom.addExitDog(dogToBathroom);
 		//bedroom.addExit(toVents);
 		
 		//vents.addExit(toBathroom);
@@ -138,11 +215,20 @@ public class Cat_MUD extends Observable {
 		try {
 			gui.run();
 			
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		try {
+			doggui.run();
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//adds the gui object's observer to the cat object
 		cat.addObserver(gui);
 		
@@ -151,6 +237,11 @@ public class Cat_MUD extends Observable {
 		
 		gui.addObserver(mob1);
 		
+		
+		
+		
+		
+		
 	}
 	
 	
@@ -158,10 +249,14 @@ public class Cat_MUD extends Observable {
 	public ArrayList<Item> getItemLabels() {
 		return items;
 	}
+	
+	public ArrayList<Dog_Item> getDogItemLabels() {
+		return dogItems;
+	}
 	//a method that takes a mob's name and current room passed as arguments every time a mob moves, and depending on the name,
 	//changes the current room of a MOB_Room object in order to store an identifying value. Once this is done, the cat's observer
 	//gets notified and can use the new values
-	public void notifyMobRoomChange(String name, Room currentRoom) {
+	public void notifyMobRoomChangeCat(String name, Room currentRoom) {
 		// update this class's mob rooms for the notifyCat method
 		if(name.equals("1")) {
 			this.mob1Room.setCurrentRoom(currentRoom);
@@ -179,6 +274,8 @@ public class Cat_MUD extends Observable {
 		setChanged();
 		notifyObservers(this.mob2Room);
 	}
+	
+	
 	
 	public Boolean isRunning() {
 		return this.isRunning;
