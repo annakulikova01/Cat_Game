@@ -25,7 +25,7 @@ public class Item_Listener implements ActionListener{
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//System.out.println("ACTIONPERFORMED");
+		System.out.println("ACTIONPERFORMED");
 		if (gui.getInventoryBoxFull().equals(false)){
 			Item buttonClicked = (Item) e.getSource();
 			if (buttonClicked.getVisibility().equals(true)) {

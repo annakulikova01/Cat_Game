@@ -203,6 +203,7 @@ public class GUI extends Observable implements Observer, LineListener {
 	
 	private void addItemLabels() {
 		for (Item i : itemLabels) {
+			
 			layeredPanePlay.add(i, Integer.valueOf(1));
 			i.addActionListener(new Item_Listener(cat, this, inventoryBox, holdingButton));
 			
@@ -471,8 +472,8 @@ public class GUI extends Observable implements Observer, LineListener {
 							int ymax = 500;
 							int y = ymin + (int) (Math.random() * (ymax - ymin));
 								
-							i.setX(x);
-							i.setY(y);
+							
+							
 							i.setVisible(true);
 							i.setVisibility(true);
 							

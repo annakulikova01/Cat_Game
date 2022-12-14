@@ -21,9 +21,9 @@ public class Item extends JButton{
 		
 		private int value;
 		
-		private int x;
+		private int newx;
 		
-		private int y;
+		private int newy;
 		
 		private double newImageSizeScale;
 		
@@ -43,13 +43,13 @@ public class Item extends JButton{
 		
 		
 		
-		Item(String name, GUI gui, String filename, int value, int x, int y, double newImageSizeScale, Boolean visibility, String holdingfilename, Room originalRoom, Boolean wasMoved){
+		Item(String name, GUI gui, String filename, int value, int newx, int newy, double newImageSizeScale, Boolean visibility, String holdingfilename, Room originalRoom, Boolean wasMoved){
 			this.name = name;
 			this.gui= gui;
 			image = new ImageIcon(filename);
 			this.value = value;
-			this.x = x;
-			this.y = y;
+			this.newx = newx;
+			this.newy = newy;
 			this.newImageSizeScale = newImageSizeScale;
 			this.visibility = visibility;
 			holdingImage = new ImageIcon(holdingfilename);
@@ -71,7 +71,7 @@ public class Item extends JButton{
 			icon = new ImageIcon(imageResized);
 			
 			
-			this.setBounds(x, y, newIconWidth, newIconHeight);
+			this.setBounds(newx, newy, newIconWidth, newIconHeight);
 			this.setIcon(icon);
 			this.setContentAreaFilled(false);
 			this.setFocusPainted(false);
@@ -131,20 +131,20 @@ public class Item extends JButton{
 			return this.originalRoom;
 		}
 		
-		public void setX(int number) {
-			x = number;
+		public void setnewX(int number) {
+			newx = number;
 		}
 		
-		public void setY(int number) {
-			y = number;
+		public void setnewY(int number) {
+			newy = number;
 		}
 		
 		public int getX() {
-			return this.x;
+			return this.newx;
 		}
 		
 		public int getY() {
-			return this.y;
+			return this.newy;
 		}
 		
 }
