@@ -25,7 +25,6 @@ public class Item extends JButton{
 		
 		private int y;
 		
-		
 		private double newImageSizeScale;
 		
 		private Boolean visibility;
@@ -51,7 +50,6 @@ public class Item extends JButton{
 			this.value = value;
 			this.x = x;
 			this.y = y;
-			
 			this.newImageSizeScale = newImageSizeScale;
 			this.visibility = visibility;
 			holdingImage = new ImageIcon(holdingfilename);
@@ -148,6 +146,5 @@ public class Item extends JButton{
 		public int getY() {
 			return this.y;
 		}
-		
 		
 }

@@ -469,7 +469,8 @@ public class GUI extends Observable implements Observer, LineListener {
 							int x = xmin + (int)(Math.random() * (xmax - xmin));
 							int ymin = 100;
 							int ymax = 500;
-							int y = ymin + (int) (Math.random() * (ymax - ymin));	
+							int y = ymin + (int) (Math.random() * (ymax - ymin));
+								
 							i.setX(x);
 							i.setY(y);
 							i.setVisible(true);
