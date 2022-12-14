@@ -45,18 +45,18 @@ public class Cat_MUD extends Observable {
 		
 		
 		
-		Item keys = new Item ("keys", gui, "Images/keys.png", 10, 350, 390, 350, 390, .5, false, "Images/holdingkeys.png", parlor, false);
-		Item yarn = new Item ("yarn", gui, "Images/yarn.png", 2, 75, 500, 75, 500, .9, false, "Images/holdingyarn.png", parlor, false);
-		Item vase = new Item ("vase", gui, "Images/vase.png", 3, 580, 135, 580, 135, 1.5, false, "Images/holdingvase.png", parlor, false);
-		Item cup = new Item ("cup", gui, "Images/cup.png", 4, 450, 475, 450, 475, .75, true, "Images/holdingcup.png", kitchen, false);
-		Item catnip = new Item ("catnip", gui, "Images/catnip.png", 0, 100, 400, 100, 400, 1, false, "Images/holdingcatnip.png", parlor, false);
-		Item tie = new Item ("tie", gui, "Images/tie.png", 15, 860, 300, 860, 300, 1, false, "Images/holdingtie.png", bedroom, false);
-		Item ring = new Item ("ring", gui, "Images/ring.png", 40, 950, 520, 950, 520, .3, false, "Images/holdingring.png", bedroom, false);
+		Item keys = new Item ("keys", gui, "Images/keys.png", 10, 350, 390,.5, false, "Images/holdingkeys.png", parlor, false);
+		Item yarn = new Item ("yarn", gui, "Images/yarn.png", 2, 75, 500, .9, false, "Images/holdingyarn.png", parlor, false);
+		Item vase = new Item ("vase", gui, "Images/vase.png", 3, 580, 135, 1.5, false, "Images/holdingvase.png", parlor, false);
+		Item cup = new Item ("cup", gui, "Images/cup.png", 4, 450, 475, .75, true, "Images/holdingcup.png", kitchen, false);
+		Item catnip = new Item ("catnip", gui, "Images/catnip.png", 0, 100, 400, 1, false, "Images/holdingcatnip.png", parlor, false);
+		Item tie = new Item ("tie", gui, "Images/tie.png", 15, 860, 300, 1, false, "Images/holdingtie.png", bedroom, false);
+		Item ring = new Item ("ring", gui, "Images/ring.png", 40, 950, 520, .3, false, "Images/holdingring.png", bedroom, false);
 		//Item phone = new Item ("phone", "Images/phone.png", 25, false);
-		Item medicine = new Item ("medicine", gui, "Images/medicine.png", 30, 400, 320, 400, 320, .75, false, "Images/holdingmedicine.png", bathroom, false);
-		Item glasses = new Item ("glasses", gui, "Images/glasses.png", 25, 280, 380, 280, 380, .75, false, "Images/holdingglasses.png", bathroom, false);
-		Item plates = new Item ("plates", gui, "Images/plates.png", 10, 840, 520, 840, 520, 1.1, true, "Images/holdingplates.png", kitchen, false);
-		Item sock = new Item ("sock", gui, "Images/sock.png", 5, 300, 600, 300, 600, .75, false, "Images/holdingsock.png", bedroom, false);
+		Item medicine = new Item ("medicine", gui, "Images/medicine.png", 30, 400, 320, .75, false, "Images/holdingmedicine.png", bathroom, false);
+		Item glasses = new Item ("glasses", gui, "Images/glasses.png", 25, 280, 380, .75, false, "Images/holdingglasses.png", bathroom, false);
+		Item plates = new Item ("plates", gui, "Images/plates.png", 10, 840, 520, 1.1, true, "Images/holdingplates.png", kitchen, false);
+		Item sock = new Item ("sock", gui, "Images/sock.png", 5, 300, 600, .75, false, "Images/holdingsock.png", bedroom, false);
 
 		items.add(keys);
 		items.add(yarn);
