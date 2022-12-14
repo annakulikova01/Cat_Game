@@ -11,14 +11,16 @@ import javax.swing.JLabel;
 public class To_Room_ButtonListener implements ActionListener{
 	
 	private Cat cat;
+	private GUI gui;
 	private Room currentRoom;
 	private JButton toRoomButton1;
 	private JButton toRoomButton2;
 	private JLabel output;
 	private JLabel currentRoomPicture;
 	
-	public To_Room_ButtonListener(Cat cat, Room currentRoom, JButton toRoomButton1, JButton toRoomButton2, JLabel output, JLabel currentRoomPicture) {
+	public To_Room_ButtonListener(Cat cat, GUI gui, Room currentRoom, JButton toRoomButton1, JButton toRoomButton2, JLabel output, JLabel currentRoomPicture) {
 		this.cat = cat;
+		this.gui = gui;
 		this.currentRoom = currentRoom;
 		this.toRoomButton1 = toRoomButton1;
 		this.toRoomButton2 = toRoomButton2;
@@ -27,23 +29,26 @@ public class To_Room_ButtonListener implements ActionListener{
 	}
 	
 	public void resetRoomItemsVisbility() {
-		ArrayList<Item> currentRoomItems = this.currentRoom.getItems();
+		ArrayList<Item> currentRoomItems = cat.getCurrentRoomItemsList();
 		for (Item i : currentRoomItems) {
 			i.setVisible(false);
-	}
+			i.setVisibility(false);
+	    }
 	}
 	
 	public void makeRoomItemsVisible() {
-		ArrayList<Item> currentRoomItems = this.currentRoom.getItems();
+		ArrayList<Item> currentRoomItems = cat.getCurrentRoomItemsList();
 		for (Item i : currentRoomItems) {
 			i.setVisible(true);
-	}
+			i.setVisibility(true);
+		}
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		//gets the source of which of the two exit buttons on the screen is clicked
 		JButton buttonClicked = (JButton) e.getSource();
+		
 		//gets the invisible text of that particular button, so that it serves as an identifier
 		String buttonText = buttonClicked.getText();
 		int indexOfFirstSpace = buttonText.indexOf(" ");

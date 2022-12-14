@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 public class Cat_MUD extends Observable {
 	private Boolean isRunning;
 	
-	// TODO: track 2 mob rooms, 1 for each mob
+	
 	private MOB_Room mob1Room;
 	private MOB_Room mob2Room;
 	
@@ -41,18 +41,22 @@ public class Cat_MUD extends Observable {
 		
 		Cat cat = new Cat (kitchen, this);
 		
-		Item keys = new Item ("keys", "Images/keys.png", 10, 350, 390, .5, false);
-		Item yarn = new Item ("yarn", "Images/yarn.png", 2, 75, 500, .9, false);
-		Item vase = new Item ("vase", "Images/vase.png", 3, 580, 135, 1.5, false);
-		Item cup = new Item ("cup", "Images/cup.png", 4, 450, 475, .75, true);
-		Item catnip = new Item ("catnip", "Images/catnip.png", 0, 100, 400, 1, false);
-		Item tie = new Item ("tie", "Images/tie.png", 15, 860, 800, 1, false);
-		Item ring = new Item ("ring", "Images/ring.png", 40, 950, 520, .3, false);
+		GUI gui = new GUI(cat, this, false, false, false, true);
+		
+		
+		
+		Item keys = new Item ("keys", gui, "Images/keys.png", 10, 350, 390, .5, false, "Images/holdingkeys.png", parlor, false);
+		Item yarn = new Item ("yarn", gui, "Images/yarn.png", 2, 75, 500, .9, false, "Images/holdingyarn.png", parlor, false);
+		Item vase = new Item ("vase", gui, "Images/vase.png", 3, 580, 135, 1.5, false, "Images/holdingvase.png", parlor, false);
+		Item cup = new Item ("cup", gui, "Images/cup.png", 4, 450, 475, .75, true, "Images/holdingcup.png", kitchen, false);
+		Item catnip = new Item ("catnip", gui, "Images/catnip.png", 0, 100, 400, 1, false, "Images/holdingcatnip.png", parlor, false);
+		Item tie = new Item ("tie", gui, "Images/tie.png", 15, 860, 300, 1, false, "Images/holdingtie.png", bedroom, false);
+		Item ring = new Item ("ring", gui, "Images/ring.png", 40, 950, 520, .3, false, "Images/holdingring.png", bedroom, false);
 		//Item phone = new Item ("phone", "Images/phone.png", 25, false);
-		Item medicine = new Item ("medicine", "Images/medicine.png", 30, 400, 320, .75, false);
-		Item glasses = new Item ("glasses", "Images/glasses.png", 25, 280, 380, .75, false);
-		Item plates = new Item ("plates", "Images/plates.png", 10, 840, 520, 1.1, true);
-		Item sock = new Item ("sock", "Images/sock.png", 5, 300, 600, .75, false);
+		Item medicine = new Item ("medicine", gui, "Images/medicine.png", 30, 400, 320, .75, false, "Images/holdingmedicine.png", bathroom, false);
+		Item glasses = new Item ("glasses", gui, "Images/glasses.png", 25, 280, 380, .75, false, "Images/holdingglasses.png", bathroom, false);
+		Item plates = new Item ("plates", gui, "Images/plates.png", 10, 840, 520, 1.1, true, "Images/holdingplates.png", kitchen, false);
+		Item sock = new Item ("sock", gui, "Images/sock.png", 5, 300, 600, .75, false, "Images/holdingsock.png", bedroom, false);
 
 		items.add(keys);
 		items.add(yarn);
@@ -99,12 +103,6 @@ public class Cat_MUD extends Observable {
 		//vents.addExit(toKitchen);
 		//vents.addExit(toParlor);
 		
-		//UI ui = new UI(new Scanner(System.in), cat);
-		//ui.run();
-		
-		
-		
-		
 		//creates threads for each mob, giving them a name, placing them in a room, giving them a number of seconds
 		//from which a time interval that determines how long they wait in a room for is created in the mob class,
 		//and gives them an image
@@ -112,9 +110,9 @@ public class Cat_MUD extends Observable {
 		//also initializes mob_Room objects for each mob, giving them their respective names and rooms through the methods created in the mob class
 		//that return specific arguments from the constructor
 	
-		Mob mob1 = new Mob("1", bedroom, this, 10000L, "Images/owner1.png");
+		Mob mob1 = new Mob("1", bedroom, this, cat, 10000L, "Images/owner1.png");
 		this.mob1Room = new MOB_Room(mob1.getName(), mob1.getRoom());
-		Mob mob2 = new Mob("2", bathroom, this, 11000L, "Images/owner2.png");
+		Mob mob2 = new Mob("2", bathroom, this, cat, 11000L, "Images/owner2.png");
 		this.mob2Room = new MOB_Room(mob2.getName(), mob2.getRoom());
 		
 		//creates a fixed pool executor service 
@@ -134,13 +132,25 @@ public class Cat_MUD extends Observable {
 		
 		
 		
-		GUI gui = new GUI(cat, this, false, false);
 		
 		
-		gui.run();
+		
+		try {
+			gui.run();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//adds the gui object's observer to the cat object
 		cat.addObserver(gui);
+		
+		
+		gui.addObserver(mob2);
+		
+		gui.addObserver(mob1);
+		
 	}
 	
 	

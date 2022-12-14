@@ -22,14 +22,17 @@ public class Cat extends Observable implements Observer {
 		this.inRoomWithMob2 = false;
 	}
 	
-	public Boolean getItem(String item) {
-		Item it = this.currentRoom.giveItem(item);
-		if (it != null) {
-			itemsHeld.add(it);
-			return true;
-		} else 
-			return false;
+	public void getItem(Item itemClicked) {
+		Item it = this.currentRoom.giveItem(itemClicked);
+		itemsHeld.add(it);
+		
 	}
+	
+	public void dropItem(Item itemClicked) {
+		this.itemsHeld.remove(itemClicked);
+		this.currentRoom.addItem(itemClicked);
+	}
+	
 	public Room getCurrentRoom() {
 		return currentRoom;
 	}
@@ -72,6 +75,11 @@ public class Cat extends Observable implements Observer {
 
 	private String getRoomExitsList() {
 		return this.currentRoom.getExitsList();
+	}
+	
+	public ArrayList<Item> getCurrentRoomItemsList(){
+		ArrayList<Item> items = this.currentRoom.getItems();
+		return items;
 	}
 	
 	//gets an array of exit directions for the current room
@@ -164,16 +172,7 @@ public class Cat extends Observable implements Observer {
 	public ImageIcon getRoomImage() {
 		return this.currentRoom.getImage();
 	}
-	public Boolean dropItem(String it) {
-		for (Item item : this.itemsHeld) {
-			if (item.getName().equals(it)) {
-				this.itemsHeld.remove(item);
-				this.currentRoom.addItem(item);
-				return true;
-			} 
-		} 
-		return false;
-	}
+
 
 	public Boolean getInRoomWithMob1() {
 		return this.inRoomWithMob1;

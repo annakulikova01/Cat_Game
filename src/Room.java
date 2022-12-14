@@ -48,14 +48,9 @@ public class Room {
 	public String roomDescription() {
 		return description;
 	}
-	public Item giveItem(String it) {
-		for (Item item : items) {
-			if (item.getName().equals(it)) {
-				items.remove(item);
-				return item;
-			}
-		}
-		return null;
+	public Item giveItem(Item itemClicked) {
+		items.remove(itemClicked);
+		return itemClicked;
 	}
 	
 	public void addItem(Item it) {

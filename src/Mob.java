@@ -1,24 +1,31 @@
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 
-public class Mob implements Runnable {
+public class Mob implements Runnable, Observer {
 	
 	private String name;
 	
 	private Cat_MUD cm;
 	
+	private Cat cat;
+	
 	private Room currentRoom;
 	
 	private long waitTime;
 	
+	private boolean mobGoToCat;
+	
 	private ImageIcon image;
 	
-	public Mob(String name, Room currentRoom, Cat_MUD cm, long waitTime, String filename) {
+	public Mob(String name, Room currentRoom, Cat_MUD cm, Cat cat, long waitTime, String filename) {
 		this.name = name;
 		this.currentRoom = currentRoom;
 		this.cm = cm;
+		this.cat = cat;
 		this.waitTime = waitTime;
 		this.image = new ImageIcon(filename);
 	}
@@ -67,6 +74,24 @@ public class Mob implements Runnable {
 		this.cm.notifyMobRoomChange(this.name, r);
 		//System.out.println("Mob " + getName() + " is in the " + this.currentRoom.getRoomName());
 		
+	}
+	
+	public void mobGoToCat(Room catRoom) {
+		Room r = catRoom;
+		this.currentRoom = r;
+		this.cm.notifyMobRoomChange(this.name,r);
+		
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		try{
+			mobGoToCat = true;
+			mobGoToCat(cat.getCurrentRoom());
+			Thread.sleep(getRandomTime());
+		}catch (InterruptedException ex){
+			ex.printStackTrace();
+		}
 	}
 }
 

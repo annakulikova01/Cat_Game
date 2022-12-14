@@ -1,72 +1,177 @@
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
+import javax.rmi.CORBA.Util;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
-public class GUI implements Observer {
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+public class GUI extends Observable implements Observer, LineListener {
 	
 	private Cat cat;
 
 	private Cat_MUD cm;
 	
+	private Boolean inventoryBoxFull = false;
 	
-	
-	
-	JLabel catnipLabel;
-	
-	// 
-	JLabel owner1PicPlay;
-	
-	JLabel owner2PicPlay;
-	
-	JLayeredPane layeredPanePlay;
+	private Boolean canCharm;
 	
 	private Boolean canCharmOwner1;
 	
 	private Boolean canCharmOwner2;
 	
+	private Boolean canTake;
+	
 	private int catPoints = 0;
 	
-	private ArrayList<Item> itemLabels = cm.getItemLabels();
+	private Boolean playCompleted;
 	
-	public GUI(Cat cat, Cat_MUD cm, Boolean canCharmOwner1, Boolean canCharmOwner2) {
-		
-		this.cat = cat;
-		this.cm = cm;
-		this.canCharmOwner1 = canCharmOwner1;
-		this.canCharmOwner2 = canCharmOwner2;
-		
-	}
+	private Timer gameTimer;
 	
+	private Timer heartsTimer;
 	
+	private int timeLeft = 300;
 	
-
+	private final int timerDelay = 1000; 
+	
+	private final int timerPeriod = 1000;
+	
+	int heartsLeft = 5;
+	
+	private ArrayList<Item> itemLabels;
+	
+	JLabel owner1PicPlay;
+	
+	JLabel owner2PicPlay;
+	
+	JButton inventoryBox = new JButton();
+	
+	JButton holdingButton = new JButton();
+	
+	JLayeredPane layeredPanePlay;
+	
+	final JLabel heartsLabel = new JLabel();
 	
 	//creates a JButton on the left side of the screen
 	JButton toRoomButton1 = new JButton();
-	
+		
 	//creates a JButton on the right side of the screen
 	JButton toRoomButton2 = new JButton();
-	
+		
 	//creates a JLabel that will display autolook text and observe after the player makes a change, such as moving to a new room or picking up and object
 	JLabel output = new JLabel();
 	
 	
+	public GUI(Cat cat, Cat_MUD cm, Boolean canCharm, Boolean canCharmOwner1, Boolean canCharmOwner2, Boolean canTake) {
+		
+		this.cat = cat;
+		this.cm = cm;
+		this.canCharm = canCharm;
+		this.canCharmOwner1 = canCharmOwner1;
+		this.canCharmOwner2 = canCharmOwner2;
+		this.canTake = canTake;
+	 
+		this.itemLabels = cm.getItemLabels();
+		
+	}
+	
+	
+	public Boolean getInventoryBoxFull() {
+		return inventoryBoxFull;
+	}
+	
+	public void setInventoryBoxFull(Boolean input) {
+		inventoryBoxFull = input;
+	}
+	public void playSound(String filepath) {
+		File audioFile = new File(filepath);
+		try
+		{
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+			AudioFormat format = audioStream.getFormat();
+			DataLine.Info info = new DataLine.Info(Clip.class, format);
+			Clip audioClip = (Clip) AudioSystem.getLine(info);
+			audioClip.addLineListener(this);
+			audioClip.open(audioStream);
+			audioClip.start();
+			//while (!playCompleted) {
+				//ry {
+					//Thread.sleep(1000);
+				//} catch (InterruptedException ex) {
+					//ex.printStackTrace();
+				//}
+			//}
+			//audioClip.close();
+			
+		}
+		catch(UnsupportedAudioFileException ex){
+			System.out.println("The specified audio file is not supported");
+			ex.printStackTrace();
+		}catch(LineUnavailableException ex){
+			System.out.println("Audio line for playing back is unavailable");
+			ex.printStackTrace();
+		}catch(IOException ex) {
+			System.out.println("Error playing the audio file");
+			ex.printStackTrace();
+		}
+	}
+	
+	public void update(LineEvent event) {
+		LineEvent.Type type = event.getType();
+		if (type == LineEvent.Type.START) {
+			System.out.println("Playback started.");
+		}else if (type == LineEvent.Type.STOP) {
+			playCompleted = true;
+			System.out.println("Playback completed.");
+		}
+		
+	}
+	
+	public Boolean isInventoryFull() {
+		if (inventoryBox.getIcon()==null) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public void setInventoryIcon(ImageIcon image) {
+		inventoryBox.setIcon(image);
+	}
 	//creates a method that changes the text of the button on the left so that it corresponds to the first exit of the new room
 	public void changeButton1Text() {
 		toRoomButton1.setText(cat.getRoomButton1Name());
@@ -87,25 +192,7 @@ public class GUI implements Observer {
 		String text = button.getText();
 		return text;
 	}
-	
-	
-	
-	public void setNotVisible(JLabel label) {
-		label.setVisible(false);
-	}
-	
-	public void setVisible(JLabel label) {
-		label.setVisible(true);
-	}
-	
-	private Boolean getCanCharmOwner1() {
-		return canCharmOwner1;
-	}
-	
-	private Boolean getCanCharmOwner2() {
-		return canCharmOwner2;
-	}
-	
+
 	private void setCanCharmOwner1(Boolean value) {
 		canCharmOwner1 = value;
 	}
@@ -113,16 +200,71 @@ public class GUI implements Observer {
 	private void setCanCharmOwner2(Boolean value) {
 		canCharmOwner2 = value;
 	}
-	/**
+	
 	private void addItemLabels() {
 		for (Item i : itemLabels) {
 			layeredPanePlay.add(i, Integer.valueOf(1));
+			i.addActionListener(new Item_Listener(cat, this, inventoryBox, holdingButton));
+			
 		}
 	}
-	*/
-	public void run() {
+	
+	public Boolean inventoryFull(Boolean input) {
+		inventoryBoxFull = input;
+		return inventoryBoxFull;
+	}
+	
+	
+	private void setupTimer() {
+        gameTimer = new Timer();
+        gameTimer.scheduleAtFixedRate(new TimerTask() {
+
+            public void run() {
+
+                if (timeLeft == 1) {
+                    timeLeft--;
+                    gameTimer.cancel();
+                    
+                } else {
+                    timeLeft--;
+                    //System.out.println("Seconds left: " + timeLeft);
+                }
+            }
+        }, timerDelay, timerPeriod);
+    }
+	
+	private void heartsTimer() {
+
+        Timer heartsTimer = new Timer();
+    	
+    	final int heartsDelay = 0; 
+    	
+    	final int heartsPeriod = 1000;
+        heartsTimer.scheduleAtFixedRate(new TimerTask() {
+        	
+            public void run() {
+            	
+        		
+        		
+                if (heartsLeft == 1) {
+                    heartsLeft--;
+                    System.out.println("Timer stopped");
+                    heartsLabel.setVisible(false);
+                    heartsTimer.cancel();
+                    
+                } else {
+                    heartsLeft--;
+                    System.out.println("Seconds left: " + heartsLeft);
+                }
+            }
+        }, heartsDelay, heartsPeriod);
+    }
+	public void run() throws Exception {
 		
 		JFrame window = new JFrame("Untitled Cat Game");
+		
+		canCharm = false;
+		setupTimer();
 		
 		//creates a layered panel that will contain the home page which fits the whole frame
 		JLayeredPane layeredPaneHome = new JLayeredPane();
@@ -179,7 +321,7 @@ public class GUI implements Observer {
 		//creates a new layered pane for the gameplay screen, which will be situated below the home page at the
 		//beginning of the game so that it is not seen upon launching
 		layeredPanePlay = new JLayeredPane();
-		layeredPanePlay.setBounds(0, 0, 1000, 1000);
+		layeredPanePlay.setBounds(0, 0, 1000, 750);
 		
 		//adds a JLabel that contains an image of the room that the cat is placed in at the start of the game
 		JLabel currentRoomPicture = new JLabel();
@@ -189,191 +331,78 @@ public class GUI implements Observer {
 		//adds the image of the current room to the background layer
 		layeredPanePlay.add(currentRoomPicture, Integer.valueOf(0));
 		
-		//this.addItemLabels();
+		this.addItemLabels();
 		
-		/**
-		ImageIcon plates = (Item.getItemImage("plates"));
-		
-		int newPlatesWidth = (int) Math.round((plates.getIconWidth()) * 1.1);
-		int newPlatesHeight = (int) Math.round((plates.getIconHeight()) * 1.1);
-		
-		Image platesOld = plates.getImage();
-		Image platesResized = platesOld.getScaledInstance(newPlatesWidth, newPlatesHeight, java.awt.Image.SCALE_SMOOTH);
-		plates = new ImageIcon(platesResized);
-		
-		
-		platesLabel.setBounds(840, 520, plates.getIconWidth(), plates.getIconHeight());
-		platesLabel.setIcon(plates);
-		platesLabel.setVisible(Item.getItemVisibility("plates"));
-		
-		layeredPanePlay.add(platesLabel, Integer.valueOf(1));
-		
-		
-		ImageIcon cup = (Item.getItemImage("cup"));
-		
-		int newCupWidth = (int) Math.round((cup.getIconWidth()) * .75);
-		int newCupHeight = (int) Math.round((cup.getIconHeight()) * .75);
-		
-		Image cupOld = cup.getImage();
-		Image cupResized = cupOld.getScaledInstance(newCupWidth, newCupHeight, java.awt.Image.SCALE_SMOOTH);
-		cup = new ImageIcon(cupResized);
-		
-		
-		cupLabel.setBounds(450, 475, cup.getIconWidth(), cup.getIconHeight());
-		cupLabel.setIcon(cup);
-		cupLabel.setVisible(Item.getItemVisibility("cup"));
-		
-		layeredPanePlay.add(cupLabel, Integer.valueOf(1));
-		
-		ImageIcon keys = (Item.getItemImage("keys"));
-		
-		int newKeysWidth = (int) Math.round((keys.getIconWidth()) * .5);
-		int newKeysHeight = (int) Math.round((keys.getIconHeight()) * .5);
-		
-		Image keysOld = keys.getImage();
-		Image keysResized = keysOld.getScaledInstance(newKeysWidth, newKeysHeight, java.awt.Image.SCALE_SMOOTH);
-		keys = new ImageIcon(keysResized);
-		
-		
-		keysLabel.setBounds(350, 390, newKeysWidth, newKeysHeight);
-		keysLabel.setIcon(keys);
-		keysLabel.setVisible(Item.getItemVisibility("keys"));
-		
-		layeredPanePlay.add(keysLabel, Integer.valueOf(1));
-		
-		
-		ImageIcon catnip = (Item.getItemImage("catnip"));
-		
-		catnipLabel = new JLabel();
-		catnipLabel.setBounds(100, 400, catnip.getIconWidth(), catnip.getIconHeight());
-		catnipLabel.setIcon(catnip);
-		catnipLabel.setVisible(Item.getItemVisibility("catnip"));
-		
-		layeredPanePlay.add(catnipLabel, Integer.valueOf(1));
-		
-		ImageIcon yarn = (Item.getItemImage("yarn"));
-		
-		int newYarnWidth = (int) Math.round((yarn.getIconWidth()) * .9);
-		int newYarnHeight = (int) Math.round((yarn.getIconHeight()) * .9);
-		
-		Image yarnOld = yarn.getImage();
-		Image yarnResized = yarnOld.getScaledInstance(newYarnWidth, newYarnHeight, java.awt.Image.SCALE_SMOOTH);
-		yarn = new ImageIcon(yarnResized);
-		
-		
-		yarnLabel.setBounds(75, 500, yarn.getIconWidth(), yarn.getIconHeight());
-		yarnLabel.setIcon(yarn);
-		yarnLabel.setVisible(Item.getItemVisibility("yarn"));
-		
-		layeredPanePlay.add(yarnLabel, Integer.valueOf(1));
-		
-		ImageIcon vase = (Item.getItemImage("vase"));
-		
-		int newVaseWidth  = (int) Math.round((vase.getIconWidth()) * 1.5);
-		int newVaseHeight = (int) Math.round((vase.getIconHeight()) * 1.5);
-		
-		Image vaseOld = vase.getImage();
-		Image vaseResized = vaseOld.getScaledInstance(newVaseWidth, newVaseHeight, java.awt.Image.SCALE_SMOOTH);
-		vase = new ImageIcon(vaseResized);
-		
-		
-		vaseLabel.setBounds(580, 135, newVaseWidth, newVaseHeight);
-		vaseLabel.setIcon(vase);
-		vaseLabel.setVisible(Item.getItemVisibility("vase"));
-		
-		layeredPanePlay.add(vaseLabel, Integer.valueOf(1));
-		
-		ImageIcon glasses = (Item.getItemImage("glasses"));
-		
-		int newGlassesWidth  = (int) Math.round((glasses.getIconWidth()) * .75);
-		int newGlassesHeight = (int) Math.round((glasses.getIconHeight()) * .75);
-		
-		Image glassesOld = glasses.getImage();
-		Image glassesResized = glassesOld.getScaledInstance(newGlassesWidth, newGlassesHeight, java.awt.Image.SCALE_SMOOTH);
-		glasses = new ImageIcon(glassesResized);
-		
-		
-		glassesLabel.setBounds(280, 380, newGlassesWidth, newGlassesHeight);
-		glassesLabel.setIcon(glasses);
-		glassesLabel.setVisible(Item.getItemVisibility("glasses"));
-		
-		layeredPanePlay.add(glassesLabel, Integer.valueOf(1));
-		
-		ImageIcon medicine = (Item.getItemImage("medicine"));
-		
-		int newMedicineWidth  = (int) Math.round((medicine.getIconWidth()) * .75);
-		int newMedicineHeight = (int) Math.round((medicine.getIconHeight()) * .75);
-		
-		Image medicineOld = medicine.getImage();
-		Image medicineResized = medicineOld.getScaledInstance(newMedicineWidth, newMedicineHeight, java.awt.Image.SCALE_SMOOTH);
-		medicine = new ImageIcon(medicineResized);
-		
-		
-		medicineLabel.setBounds(400, 320, newMedicineWidth, newMedicineHeight);
-		medicineLabel.setIcon(medicine);
-		medicineLabel.setVisible(Item.getItemVisibility("medicine"));
-		
-		layeredPanePlay.add(medicineLabel, Integer.valueOf(1));
-		
-		ImageIcon tie = (Item.getItemImage("tie"));
-		
-		
-		tieLabel.setBounds(860, 300, tie.getIconWidth(), tie.getIconHeight());
-		tieLabel.setIcon(tie);
-		tieLabel.setVisible(Item.getItemVisibility("tie"));
-		
-		layeredPanePlay.add(tieLabel, Integer.valueOf(1));
-		
-		ImageIcon sock = (Item.getItemImage("sock"));
-		
-		int newSockWidth  = (int) Math.round((sock.getIconWidth()) * .75);
-		int newSockHeight = (int) Math.round((sock.getIconHeight()) * .75);
-		
-		Image sockOld = sock.getImage();
-		Image sockResized = sockOld.getScaledInstance(newSockWidth, newSockHeight, java.awt.Image.SCALE_SMOOTH);
-		sock = new ImageIcon(sockResized);
-		
-		
-		sockLabel.setBounds(300, 600, newSockWidth, newSockHeight);
-		sockLabel.setIcon(sock);
-		sockLabel.setVisible(Item.getItemVisibility("sock"));
-		
-		layeredPanePlay.add(sockLabel, Integer.valueOf(1));
-		
-		ImageIcon ring = (Item.getItemImage("ring"));
-		
-		int newRingWidth  = (int) Math.round((ring.getIconWidth()) * .3);
-		int newRingHeight = (int) Math.round((ring.getIconHeight()) * .3);
-		
-		Image ringOld = ring.getImage();
-		Image ringResized = ringOld.getScaledInstance(newRingWidth, newRingHeight, java.awt.Image.SCALE_SMOOTH);
-		ring = new ImageIcon(ringResized);
-		
-		
-		ringLabel.setBounds(950, 520, newRingWidth, newRingHeight);
-		ringLabel.setIcon(ring);
-		ringLabel.setVisible(Item.getItemVisibility("ring"));
-		
-		layeredPanePlay.add(ringLabel, Integer.valueOf(1));
-		
-		*/
 		//creates a JLabel that contains an image of the cat, and places it at a layer above the image of the room
 		//so that it appears that the cat is in the room
-		JLabel catPicPlay = new JLabel();
-		catPicPlay.setBounds(375,515, 250, 250);
+		JButton catPicPlay = new JButton();
+		catPicPlay.setBounds(220,515, 250, 250);
 		ImageIcon catPlayPic = new ImageIcon("Images/cat.png");
 		Image catPlayOld = catPlayPic.getImage();
 		Image catPlayResized = catPlayOld.getScaledInstance(250, 250, java.awt.Image.SCALE_SMOOTH);
 		catPlayPic = new ImageIcon(catPlayResized);
 		catPicPlay.setIcon(catPlayPic);
+		catPicPlay.setContentAreaFilled(false);
+		catPicPlay.setFocusPainted(false);
+		catPicPlay.setBorderPainted(false);
 		
-		layeredPanePlay.add(catPicPlay, Integer.valueOf(1));
+		catPicPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (canCharmOwner1.equals(false) && canCharmOwner2.equals(false)) {
+					playSound("Sound/mixkit-cartoon-kitty-begging-meow-92.wav");
+				}
+				else {
+					heartsLabel.setVisible(true);
+					heartsLeft = 5;
+					heartsTimer();
+					playSound("Sound/purring.wav");
+					if (canCharmOwner1.equals(true)) {
+						catPoints = catPoints - 1;
+						System.out.println("Catpoints: " + catPoints);
+					}
+					if (canCharmOwner2.equals(true)) {
+						catPoints = catPoints - 1;
+						System.out.println("Catpoints: " + catPoints);
+					}
+				}
+				//setChanged();
+				//notifyObservers();
+			}
+		});
+		
+		layeredPanePlay.add(catPicPlay, Integer.valueOf(2));
+		
+		JLayeredPane heartPane = new JLayeredPane();
+		//heartPane.setBackground(Color.BLACK);
+		//heartPane.setOpaque(true);
+		heartPane.setBounds(10, 10, 900, 500);
+		
+		JPanel heartPanel = new JPanel();
+		heartPanel.setSize(900, 500);
+		//heartPanel.setBackground(Color.BLUE);
+		//heartPanel.setOpaque(true);
+		heartPanel.setLayout(new BorderLayout());
+		
+		ImageIcon heartsgif = new ImageIcon("Images/hearts2.gif");
+		int newIconWidth  = (int) Math.round((heartsgif.getIconWidth()) * .3);
+		int newIconHeight = (int) Math.round((heartsgif.getIconHeight()) * .3);
+		Image heartsOld = heartsgif.getImage();
+		Image heartsResized = heartsOld.getScaledInstance(newIconWidth, newIconHeight, java.awt.Image.SCALE_DEFAULT);
+		heartsgif = new ImageIcon(heartsResized);
+		heartsLabel.setBounds(350, 450, heartsgif.getIconWidth(), heartsgif.getIconHeight());
+		heartsLabel.setIcon(heartsgif);
+		heartsLabel.setVisible(false);
+		
+		layeredPanePlay.add(heartsLabel, Integer.valueOf(3));
+		
+		
+		
 		
 		owner1PicPlay = new JLabel();
-		owner1PicPlay.setBounds(25, 150, 157, 400);
+		owner1PicPlay.setBounds(25, 220, 235, 550);
 		ImageIcon owner1PlayPic = new ImageIcon("Images/owner1.png");
 		Image owner1PlayOld = owner1PlayPic.getImage();
-		Image owner1PlayResized = owner1PlayOld.getScaledInstance(157, 400, java.awt.Image.SCALE_SMOOTH);
+		Image owner1PlayResized = owner1PlayOld.getScaledInstance(235, 550, java.awt.Image.SCALE_SMOOTH);
 		owner1PlayPic = new ImageIcon(owner1PlayResized);
 		owner1PicPlay.setIcon(owner1PlayPic);
 		owner1PicPlay.setVisible(false);
@@ -383,116 +412,93 @@ public class GUI implements Observer {
 		layeredPanePlay.add(owner1PicPlay, Integer.valueOf(2));
 		
 		owner2PicPlay = new JLabel();
-		owner2PicPlay.setBounds(818, 150, 157, 400);
+		owner2PicPlay.setBounds(740, 220, 235, 550);
 		ImageIcon owner2PlayPic = new ImageIcon("Images/owner2.png");
 		Image owner2PlayOld = owner2PlayPic.getImage();
-		Image owner2PlayResized = owner2PlayOld.getScaledInstance(157, 400, java.awt.Image.SCALE_SMOOTH);
+		Image owner2PlayResized = owner2PlayOld.getScaledInstance(235, 550, java.awt.Image.SCALE_SMOOTH);
 		owner2PlayPic = new ImageIcon(owner2PlayResized);
 		owner2PicPlay.setIcon(owner2PlayPic);
 		owner2PicPlay.setVisible(false);
 		
 		layeredPanePlay.add(owner2PicPlay, Integer.valueOf(2));
 		
+		ImageIcon holding = new ImageIcon("Images/holdingbutton.png");
+		ImageIcon holdingNew = new ImageIcon("Images/holdingbutton2.png");
 		
-		//creates a JLabel that lists the commands that the player can type in to the input box, and adds it to the background layer
-		JLabel commands = new JLabel("Commands: grab <it>, bat <it>,"
-    			+ "drop <it>, meow, glare, charm, and observe");
-		commands.setBackground(new Color(216, 191, 216));
-		commands.setOpaque(true);
-		commands.setBounds(0, 750, 700, 85);
-		commands.setVerticalAlignment(SwingConstants.TOP);
+		int holdingWidth = holding.getIconWidth();
+		int holdingHeight = holding.getIconHeight();
 		
-		layeredPanePlay.add(commands, Integer.valueOf(0));
+		Image holdingOld = holdingNew.getImage();
+		Image holdingResized = holdingOld.getScaledInstance(holdingWidth, holdingHeight, java.awt.Image.SCALE_SMOOTH);
+		holdingNew = new ImageIcon(holdingResized);
 		
-		//positions and styles the output JLabel, and sets its text to the autolookText of the current room the cat is in 
-		//at the start of the game, and adds it to the background layer of the gameplay screen
-		output.setBackground(new Color(216, 191, 216));
-		output.setOpaque(true);
-		output.setBounds(0, 835, 1000, 164);
-		output.setText(cat.autoLookText());
-		output.setVerticalAlignment(SwingConstants.TOP);
+		//holdingButton = new JLabel();
+		holdingButton.setBounds(50, 30, 130, 44);
+		holdingButton.setIcon(holdingNew);
+		holdingButton.setVisible(false);
+			
 		
-		layeredPanePlay.add(output, Integer.valueOf(0));
+		layeredPanePlay.add(holdingButton, Integer.valueOf(3));
 		
-		//creates an input text field that interprets the commands of the user and executes the corresponding methods, and adds it to the background layer
-		JTextField input = new JTextField();
-		input.setBounds(700, 750, 300, 85);
-		input.addActionListener(new ActionListener() {
-	    	  public void actionPerformed(ActionEvent evt) {
-	    		  JTextField input = (JTextField)evt.getSource();
-	    		  String command;
-	    		  String item;
-	    		  Scanner s = new Scanner(input.getText());
-	    		  command = s.next();
-	    		  
-	    		  switch (command) {
-	        		
-	        		case "exit":
-	        			break;
-	        			
-	        		case "observe":
-	        			output.setText(cat.observe());
-	        			break;
-	        		/*	
-	        		case "bat":
-	        			item = s.next();
-	        			if (!cat.batItem(item))
-	        				System.out.println("Couldn't bat at " + item);
-	        			break;
-	        		*/
-	        		case "grab":
-	        			item = s.next();
-	        			if (!cat.getItem(item))
-	        				output.setText("Couldn't get " + item);
-	        			else output.setText(cat.autoLookText());
-	        			break;
-	        			
-	        		case "drop":
-	        			item = s.next();
-	        			if (!cat.dropItem(item))
-	        				output.setText("Couldn't drop " + item);
-	        			else output.setText(cat.autoLookText());
-	        			break;
-	        		
-	        		case "meow":
-	        			output.setText("meow");
-	        			break;
-	        		/*
-	        		case "glare":
-	        			System.out.println("3:<");
-	        			if (!cat.glare())
-	        				System.out.println("There's no one around to glare at.");
-	        			break;
-	        		*/
-	        			
-	        		case "charm":
-	        			
-	        			if (getCanCharmOwner1().equals(true)) {
-	        				catPoints = catPoints - 1;
-	        				System.out.println("catPoints: " + catPoints + "");
-	        					
-	        			}
-	        			if (getCanCharmOwner2().equals(true)) {
-	        				catPoints = catPoints - 1;
-	        				System.out.println("catPoints: " + catPoints + "");
-	        					
-	        			}
-	        			
-	        			if ((getCanCharmOwner1().equals(false)) & (getCanCharmOwner2().equals(false))) {
-	        				System.out.println("There's no one around to charm.");
-	        			}
-	        			break;
-	        			
-	        		default:
-	        			output.setText("Unrecognized command");
-	        			break;
-	        			}
-	 	
-	        		}
-	    	  
-	      });
 		
-		layeredPanePlay.add(input, Integer.valueOf(0));
+		
+		
+		inventoryBox.setBounds(50, 90, 130, 130);
+		inventoryBox.setVisible(true);
+		inventoryBox.setIcon(null);
+		inventoryBox.setContentAreaFilled(false);
+		inventoryBox.setFocusPainted(false);
+		inventoryBox.setBorderPainted(false);
+		Random random = new Random();
+		
+		inventoryBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (inventoryBoxFull.equals(true)) {
+					JButton buttonClicked = (JButton) e.getSource();
+					
+					for (Item i : itemLabels) {
+						if (buttonClicked.getIcon().equals(i.getInventoryImage())){
+							inventoryBox.setVisible(false);
+							//inventoryBox.setIcon(null);
+							
+							inventoryBoxFull = false;
+							int xmin = 100;
+							int xmax = 900;
+							int x = xmin + (int)(Math.random() * (xmax - xmin));
+							int ymin = 100;
+							int ymax = 500;
+							int y = ymin + (int) (Math.random() * (ymax - ymin));
+							i.setBounds(x, y, i.getIconWidth(), i.getIconHeight());
+							i.setVisible(true);
+							i.setVisibility(true);
+							cat.dropItem(i);
+							holdingButton.setVisible(false);
+							/*
+							if (!i.getOriginalRoom().equals(cat.getCurrentRoom())) {
+								i.setWasMoved(true);
+								catPoints = catPoints + i.getValue();
+								System.out.println("Cat points: " + catPoints);
+							}
+							if (i.getOriginalRoom().equals(cat.getCurrentRoom())) {
+								if (i.getWasMoved().equals(true)) {
+								catPoints = catPoints - i.getValue();
+								System.out.println("Cat points: " + catPoints);
+								}
+								i.setWasMoved(false);
+							}
+							*/
+							
+						}
+						
+					}
+				}
+			}
+		});
+		layeredPanePlay.add(inventoryBox, Integer.valueOf(3));
+		
+		
+		
+		
 		
 		//creates a button upon which, when clicked, terminates the program
 		JButton exitButton = new JButton();
@@ -529,9 +535,9 @@ public class GUI implements Observer {
 		toRoomButton1.setContentAreaFilled(false);
 		toRoomButton1.setFocusPainted(false);
 		toRoomButton1.setBorderPainted(false);
-		toRoomButton1.addActionListener(new To_Room_ButtonListener(cat, cat.getCurrentRoom(), toRoomButton1, toRoomButton2, output, currentRoomPicture));
+		toRoomButton1.addActionListener(new To_Room_ButtonListener(cat, this, cat.getCurrentRoom(), toRoomButton1, toRoomButton2, output, currentRoomPicture));
 		
-		layeredPanePlay.add(toRoomButton1, Integer.valueOf(1));
+		layeredPanePlay.add(toRoomButton1, Integer.valueOf(3));
 		
 		
 		
@@ -545,9 +551,9 @@ public class GUI implements Observer {
 		toRoomButton2.setContentAreaFilled(false);
 		toRoomButton2.setFocusPainted(false);
 		toRoomButton2.setBorderPainted(false);
-		toRoomButton2.addActionListener(new To_Room_ButtonListener(cat, cat.getCurrentRoom(), toRoomButton1, toRoomButton2, output, currentRoomPicture));
+		toRoomButton2.addActionListener(new To_Room_ButtonListener(cat, this, cat.getCurrentRoom(), toRoomButton1, toRoomButton2, output, currentRoomPicture));
 		
-		layeredPanePlay.add(toRoomButton2, Integer.valueOf(1));
+		layeredPanePlay.add(toRoomButton2, Integer.valueOf(3));
 		
 		//creates another layered pane which will contain the home page layered pane and gameplay layered pane so that the two screens can be toggled from using a button
 		JLayeredPane superPane = new JLayeredPane();
@@ -564,18 +570,19 @@ public class GUI implements Observer {
 		playButton.setFocusPainted(false);
 		playButton.setBorderPainted(false);
 		playButton.addActionListener(new ButtonListener(layeredPaneHome, layeredPanePlay, superPane));
-		playButton.setBounds(310, 600, 325, 150);
+		playButton.setBounds(310, 550, 325, 150);
 		
 		layeredPaneHome.add(playButton, Integer.valueOf(1));
 		
 		superPane.add(layeredPaneHome, Integer.valueOf(1));
 		superPane.add(layeredPanePlay, Integer.valueOf(0));
+		//superPane.add(heartPane, Integer.valueOf(3));
 	            
 		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//sets the layour manager to null so that each component can be manually positioned
 		window.setLayout(null);
-		window.setSize(1000, 1000);
+		window.setSize(1000, 750);
 		window.add(superPane);
 		window.setResizable(false);
 		window.setVisible(true);
@@ -586,6 +593,7 @@ public class GUI implements Observer {
 		if (this.cat.getInRoomWithMob1().equals(true)) {
 			this.owner1PicPlay.setVisible(true);
 			setCanCharmOwner1(true);
+			canCharm = true;
 		}
 		if (this.cat.getInRoomWithMob1().equals(false)){
 			this.owner1PicPlay.setVisible(false);
@@ -594,6 +602,7 @@ public class GUI implements Observer {
 		if (this.cat.getInRoomWithMob2().equals(true)) {
 			this.owner2PicPlay.setVisible(true);
 			setCanCharmOwner2(true);
+			canCharm = true;
 		}
 		if (this.cat.getInRoomWithMob2().equals(false)){
 			this.owner2PicPlay.setVisible(false);
@@ -601,5 +610,8 @@ public class GUI implements Observer {
 		}
 		
 	}
+
+	
+
 	
 }
