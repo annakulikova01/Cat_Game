@@ -470,7 +470,7 @@ public class GUI extends Observable implements Observer, LineListener {
 							int ymin = 100;
 							int ymax = 500;
 							int y = ymin + (int) (Math.random() * (ymax - ymin));	
-							
+							i.setBounds(x, y, i.getIconWidth(), i.getIconHeight());
 							i.setVisible(true);
 							i.setVisibility(true);
 							
